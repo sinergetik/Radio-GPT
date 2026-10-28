@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#080b10">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>TMA Audio Studio</title>
+<!-- Tailwind is optional: the application has a complete inline CSS fallback for offline/WebView use. -->
+<script src="https://cdn.tailwindcss.com" defer></script>
+<style>
+:root{color-scheme:dark;--bg:#080b10;--panel:#111720;--panel2:#151e29;--stroke:#263342;--text:#e9f0f7;--muted:#8da0b5;--accent:#39c4db;--accent2:#4c91ff;--green:#58d6a0;--orange:#ffb45b;--danger:#ff6c78;--radius:18px;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);font-size:14px;line-height:1.4;overscroll-behavior-y:contain}button,input,select{font:inherit}button{cursor:pointer;touch-action:manipulation}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button:disabled{opacity:.4;cursor:not-allowed}.app{max-width:1080px;margin:0 auto;padding:12px 12px 30px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 2px 15px}.brand{display:flex;gap:11px;align-items:center;min-width:0}.brand-mark{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#173f55,#183344);border:1px solid #2a7384;color:#7deaff;font-size:20px;box-shadow:0 0 22px #1c829022}.brand h1{font-size:18px;line-height:1.15;margin:0;font-weight:800;letter-spacing:.02em}.brand p{margin:4px 0 0;font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}.top-actions{display:flex;gap:7px}.icon-btn,.btn,.tab,.pill-btn{border:1px solid var(--stroke);background:#121923;color:var(--text);border-radius:12px;min-height:40px;padding:9px 12px;display:inline-flex;align-items:center;justify-content:center;gap:7px}.icon-btn{width:42px;padding:0;font-size:17px}.btn.primary{background:linear-gradient(135deg,#16798b,#236f89);border-color:#2998ad;color:#f5fdff;font-weight:700}.btn.active,.pill-btn.active,.tab.active{background:#173744;border-color:#287b90;color:#80e9f5}.btn.small{min-height:34px;padding:6px 10px;font-size:12px;border-radius:10px}.btn.danger{border-color:#6b3942;color:#ffb0b5}.statusline{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;margin-bottom:12px;border:1px solid #1d2937;border-radius:12px;background:#0d1219;color:var(--muted);font-size:11px}.statusleft{display:flex;align-items:center;gap:8px;min-width:0}.dot{height:7px;width:7px;border-radius:50%;background:#66758a;flex:none}.dot.live{background:var(--green);box-shadow:0 0 10px #58d6a066}.dot.warn{background:var(--orange)}.tabs{display:flex;gap:7px;margin-bottom:12px}.tab{flex:1;font-weight:700;min-height:42px}.layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:12px;align-items:start}.stack{display:flex;flex-direction:column;gap:12px;min-width:0}.panel{border:1px solid var(--stroke);background:linear-gradient(155deg,#121923,#0f151d);border-radius:var(--radius);padding:14px;min-width:0;box-shadow:0 10px 28px #0000000d}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.panel h2{font-size:13px;letter-spacing:.09em;text-transform:uppercase;color:#b8c6d6;margin:0;font-weight:800}.subtle{color:var(--muted);font-size:11px}.badge{font-size:10px;padding:4px 7px;border:1px solid #304253;border-radius:7px;color:#9db2c5;letter-spacing:.04em}.now-playing{display:grid;grid-template-columns:74px minmax(0,1fr);gap:13px;align-items:center}.cover{height:74px;width:74px;border-radius:14px;background:radial-gradient(circle at 35% 25%,#246e86,#102333 66%);border:1px solid #2c5e73;display:grid;place-items:center;overflow:hidden}.cover svg{width:48px;height:48px}.track-title{font-size:19px;font-weight:800;line-height:1.2;overflow-wrap:anywhere}.track-subtitle{margin-top:5px;color:var(--muted);font-size:12px;overflow-wrap:anywhere}.track-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.spectrum-wrap{position:relative;margin:14px 0 10px;border:1px solid #1b2a39;border-radius:13px;overflow:hidden;background:#070b10}.spectrum-wrap canvas{width:100%;height:88px;display:block}.spectrum-label{position:absolute;left:9px;top:7px;font-size:9px;letter-spacing:.13em;color:#6c8799;pointer-events:none}.seekrow{display:grid;grid-template-columns:40px 1fr 40px;gap:8px;align-items:center;color:var(--muted);font-size:10px}.seekrow input{width:100%;accent-color:var(--accent);padding:0}.seekrow input:disabled{opacity:.22}.main-controls{display:flex;align-items:center;justify-content:center;gap:10px;margin:13px 0 11px}.transport{width:44px;height:44px;border:1px solid var(--stroke);border-radius:50%;display:grid;place-items:center;background:#151e29;color:#dfeaf6;font-size:17px}.transport.play{width:58px;height:58px;border-radius:20px;background:linear-gradient(145deg,#207f90,#155c76);border-color:#328da0;color:#fff;font-size:22px;box-shadow:0 8px 24px #187a8c24}.source-options{display:flex;flex-direction:column;gap:9px}.field{display:flex;flex-direction:column;gap:5px;min-width:0}.field label,.field-label{font-size:11px;color:var(--muted)}.field input[type=text],.field input[type=url],.field input[type=number],.field select,.field input[type=search]{min-width:0;width:100%;border:1px solid #2c3b4b;border-radius:10px;background:#0b1118;color:var(--text);padding:10px 11px;min-height:40px}.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.station-row{display:flex;gap:7px;flex-wrap:wrap}.station-row button{font-size:11px;padding:7px 9px;border:1px solid #2a3848;background:#0d141d;color:#b5c6d6;border-radius:9px}.station-row button.selected{background:#153641;border-color:#25869b;color:#8beaf5}.hint{font-size:10px;line-height:1.45;color:#7e92a6;margin:3px 0 0}.sep{height:1px;background:#25313e;margin:12px 0}.playlist{display:flex;flex-direction:column;gap:6px;max-height:260px;overflow:auto}.playlist-item{display:grid;grid-template-columns:28px minmax(0,1fr) 30px;align-items:center;gap:8px;padding:8px;border:1px solid #253342;background:#0c121a;border-radius:11px;min-width:0}.playlist-item.current{border-color:#26788c;background:#102832}.playlist-item .num{height:26px;width:26px;border-radius:8px;background:#172331;color:#83a0b6;display:grid;place-items:center;font-size:10px}.playlist-item .name{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.playlist-item .meta{font-size:10px;color:var(--muted);margin-top:2px}.playlist-item button{width:28px;height:28px;padding:0;border-radius:8px;background:#151f2b;border:1px solid #2c3c4b;color:#b5c4d3}.dropzone{border:1px dashed #3b5368;padding:12px;border-radius:12px;text-align:center;background:#0a1017;color:var(--muted);font-size:11px}.dropzone strong{color:#c5d8e8;display:block;margin-bottom:3px}.range-row{display:grid;grid-template-columns:minmax(70px,1fr) minmax(80px,2fr) 46px;align-items:center;gap:10px;margin:11px 0}.range-row label{font-size:12px;color:#bfccd8}.range-row input[type=range]{width:100%;accent-color:var(--accent);min-width:0}.range-value{text-align:right;color:#73ddec;font-size:11px;font-variant-numeric:tabular-nums}.eq-presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.pill-btn{min-height:32px;font-size:11px;padding:6px 9px;border-radius:9px}.eq-graph{height:110px;border:1px solid #1e2c3b;border-radius:12px;background:#090e14;position:relative;margin:8px 0 10px;overflow:hidden}.eq-graph canvas{display:block;width:100%;height:100%}.eq-bands{display:flex;gap:8px;overflow-x:auto;padding:5px 3px 10px;scrollbar-width:thin;scrollbar-color:#344b5d #0a1017}.eq-band{flex:0 0 40px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 3px;border:1px solid #23313f;border-radius:10px;background:#0a1017}.eq-band .freq{font-size:9px;color:#a8b8c8;white-space:nowrap}.eq-band input{height:100px;width:22px;writing-mode:vertical-lr;direction:rtl;accent-color:var(--accent);touch-action:pan-x}.eq-band .db{font-size:10px;color:#6ed9ec;font-variant-numeric:tabular-nums}.eq-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--muted);font-size:10px}.section-tag{margin:16px 0 8px;font-size:10px;color:#7191a8;text-transform:uppercase;letter-spacing:.13em;font-weight:800}.mini-value{color:#7edbe9;font-variant-numeric:tabular-nums}.toggle-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #1f2b38}.toggle-row:last-child{border-bottom:0}.toggle-row strong{display:block;font-size:12px;font-weight:650}.toggle-row small{display:block;color:var(--muted);font-size:10px;margin-top:2px}.switch{appearance:none;width:42px;height:24px;border:1px solid #364657;border-radius:20px;background:#111923;position:relative;flex:none;transition:.16s}.switch:before{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;border-radius:50%;background:#77899a;transition:.16s}.switch:checked{background:#155769;border-color:#2b8ba0}.switch:checked:before{left:21px;background:#9af2f9}.effects-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.effect-card{padding:10px;border:1px solid #263443;border-radius:12px;background:#0b1118;min-width:0}.effect-card label{font-size:11px;color:#b6c5d5;display:flex;justify-content:space-between;gap:5px}.effect-card input{width:100%;margin-top:9px;accent-color:var(--accent)}.distance-note{padding:9px 10px;border-radius:10px;background:#0a131b;border:1px solid #203545;color:#8ea5b9;font-size:10px;line-height:1.45;margin-top:10px}.sensor-values{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:11px 0}.scene-stage{position:relative;height:118px;border:1px solid #253746;border-radius:13px;overflow:hidden;background:radial-gradient(ellipse at 50% 85%,#102a35 0%,#0a1118 55%,#080d13 100%);perspective:320px;margin:8px 0 10px}.scene-stage:before,.scene-stage:after{content:"";position:absolute;left:-10%;width:120%;height:1px;background:#1b3845;transform:rotateX(60deg);top:68%}.scene-stage:after{top:85%;opacity:.6}.stage-label{position:absolute;left:10px;top:8px;font-size:8px;letter-spacing:.18em;color:#68899d;z-index:2}.car-cabin{position:absolute;left:50%;top:54%;width:160px;height:68px;transform:translate(-50%,-50%) rotateX(10deg);border:1px solid #315465;border-radius:45% 45% 30% 30% / 52% 52% 24% 24%;background:linear-gradient(135deg,#122630aa,#0b141bcc);box-shadow:inset 0 0 22px #15546b26}.car-cabin:after{content:"";position:absolute;inset:8px 17px 16px;border:1px solid #1e3c4a;border-radius:40% 40% 20% 20% / 50% 50% 20% 20%}.stage-speaker{position:absolute;width:11px;height:11px;border-radius:50%;background:#55d5e9;border:2px solid #d0faff;box-shadow:0 0 13px #35c2d9aa;z-index:2;top:27px}.stage-speaker.left{left:21px}.stage-speaker.right{right:21px}.stage-sub{position:absolute;width:15px;height:6px;border-radius:50%;background:#4f91d1;border:1px solid #a1d5ff;bottom:8px;left:50%;transform:translateX(-50%);z-index:2;box-shadow:0 0 10px #3f91d155}.scene-listener{position:absolute;width:16px;height:16px;border:2px solid #e6fbff;background:#2ab9d5;border-radius:50%;left:calc(50% - 8px);bottom:21px;z-index:4;box-shadow:0 0 18px #34d8ef99;transition:transform .18s ease-out}.scene-beam{position:absolute;left:50%;top:29px;width:1px;height:46px;background:linear-gradient(#55d5e9aa,transparent);transform-origin:top;z-index:1;transition:transform .18s ease-out}.scene-readout{position:absolute;right:9px;top:8px;font-size:9px;color:#6a9aae;z-index:3}.sensor-box{border:1px solid #253444;background:#0b1118;border-radius:10px;padding:9px;text-align:center}.sensor-box span{font-size:10px;color:var(--muted);display:block}.sensor-box b{display:block;font-size:15px;color:#85deea;font-variant-numeric:tabular-nums;margin-top:4px}.notice{padding:10px 11px;border-left:3px solid #2d8193;background:#0b1720;color:#9cb2c5;font-size:11px;border-radius:0 9px 9px 0;line-height:1.5}.notice.warn{border-color:var(--orange);background:#19150f;color:#c9b59a}.footer{color:#5f7185;font-size:10px;text-align:center;padding:14px 8px 5px}.hidden{display:none!important}.pocket-overlay{position:fixed;inset:0;z-index:9999;background:#000;color:#7a828a;display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;opacity:1;touch-action:manipulation}.pocket-overlay.show{display:flex}.pocket-art{font-size:10px;letter-spacing:.4em;color:#252a2f}.pocket-controls{display:flex;gap:16px;opacity:.32;animation:drift 22s ease-in-out infinite alternate}.pocket-controls button{background:#000;border:1px solid #252a2f;color:#5d646d;border-radius:50%;width:52px;height:52px;font-size:19px}.pocket-exit{font-size:10px;color:#454c53;background:none;border:0;padding:10px}@keyframes drift{0%{transform:translateX(-7px)}100%{transform:translateX(7px)}}.spectrum-modal{position:fixed;inset:0;z-index:9000;background:#05080d;display:none;flex-direction:column;padding:calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 14px)}.spectrum-modal.show{display:flex}.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.modal-head h2{font-size:14px;letter-spacing:.18em;margin:0;color:#97b4c9}.modal-canvas{flex:1;min-height:180px;width:100%;border:1px solid #172838;border-radius:16px;background:#060a0f}.modal-caption{text-align:center;color:#536e82;font-size:10px;letter-spacing:.15em;margin-top:12px}.pocket-hint{max-width:260px;text-align:center;font-size:10px;color:#313840;line-height:1.5;padding:0 20px}
+@media(max-width:760px){.app{padding:8px 9px 24px}.layout{grid-template-columns:1fr}.topbar{padding-bottom:11px}.panel{padding:12px}.brand h1{font-size:17px}.top-actions .hide-mobile{display:none}.layout .stack{gap:10px}.spectrum-wrap canvas{height:76px}.row3{gap:6px}.range-row{grid-template-columns:90px minmax(80px,1fr) 42px}.track-title{font-size:18px}}
+@media(max-width:370px){.brand-mark{width:36px;height:36px}.brand h1{font-size:15px}.brand p{font-size:9px}.icon-btn{width:38px;height:38px}.now-playing{grid-template-columns:60px minmax(0,1fr)}.cover{width:60px;height:60px}.track-title{font-size:16px}.effects-grid{grid-template-columns:1fr}.row2{grid-template-columns:1fr}.main-controls{gap:7px}}
+@media(min-width:1100px){.app{padding-top:18px}.panel{padding:16px}}
+</style>
+</head>
+<body>
+<div class="app" id="appRoot">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">♫</div>
+      <div><h1>TMA AUDIO STUDIO</h1><p>Car DSP · Web Audio</p></div>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" id="pocketBtn" title="Карманный режим" aria-label="Карманный режим">◐</button>
+      <button class="icon-btn" id="spectrumBtn" title="Спектр на весь экран" aria-label="Спектр на весь экран">▥</button>
+      <button class="icon-btn" id="fullscreenBtn" title="Полноэкранный режим" aria-label="Полноэкранный режим">⛶</button>
+    </div>
+  </header>
+  <div class="statusline"><div class="statusleft"><span class="dot" id="statusDot"></span><span id="statusText">Готово к воспроизведению</span></div><span id="engineStatus">DSP: ожидание</span></div>
+  <div class="tabs" role="tablist"><button class="tab active" id="radioTab" role="tab" aria-selected="true">◉ Радио</button><button class="tab" id="filesTab" role="tab" aria-selected="false">▤ Файлы</button></div>
+
+  <main class="layout">
+    <div class="stack">
+      <section class="panel" aria-labelledby="playerHeading">
+        <div class="panel-head"><h2 id="playerHeading">Плеер</h2><span class="badge" id="sourceBadge">ONLINE RADIO</span></div>
+        <div class="now-playing">
+          <div class="cover" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none"><path d="M34 8v37a10 10 0 1 1-6-9V18l25-5v28a10 10 0 1 1-6-9V8l-13 3" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 19c-5 8-5 18 0 26M14 24c-3 5-3 11 0 16" stroke="#37c8e3" stroke-width="2.5" stroke-linecap="round" opacity=".65"/></svg></div>
+          <div><div class="track-title" id="trackTitle">Radio Record</div><div class="track-subtitle" id="trackSubtitle">Выберите станцию и нажмите Play</div><div class="track-meta"><span class="badge" id="formatBadge">AAC+ / LIVE</span><span class="badge" id="qualityBadge">96 kbps*</span></div></div>
+        </div>
+        <div class="spectrum-wrap"><span class="spectrum-label" id="spectrumLabel">SPECTRUM · DSP / LOCAL AUDIO</span><canvas id="spectrumCanvas" aria-label="Аудиоспектр"></canvas></div>
+        <div class="seekrow"><span id="currentTime">LIVE</span><input type="range" id="seekbar" min="0" max="1000" value="0" disabled aria-label="Позиция воспроизведения"><span id="totalTime">STREAM</span></div>
+        <div class="main-controls"><button class="transport" id="prevBtn" aria-label="Предыдущий трек">⏮</button><button class="transport play" id="playBtn" aria-label="Воспроизвести">▶</button><button class="transport" id="nextBtn" aria-label="Следующий трек">⏭</button></div>
+        <div class="row2"><div class="field"><label for="masterVolume">Общая громкость</label><input id="masterVolume" type="range" min="0" max="1" value="0.8" step="0.01" style="width:100%;accent-color:var(--accent)"></div><div class="field"><label for="radioDsp">DSP для радио</label><button class="btn small" id="radioDsp" aria-pressed="false">В обход DSP</button></div></div>
+        <p class="hint" id="radioDspHint">Прямой поток обычно надёжнее. Для радио DSP нужен CORS-доступ со стороны сервера станции.</p>
+      </section>
+
+      <section class="panel" id="radioPanel" aria-labelledby="radioHeading">
+        <div class="panel-head"><h2 id="radioHeading">Интернет-радио</h2><span class="badge">AUTO-RECONNECT</span></div>
+        <div class="field"><label for="stationSelect">Станция</label><select id="stationSelect"><option value="record">Radio Record</option><option value="russianmix">Record Russian Mix</option><option value="deep">Record Deep</option><option value="tiesto">Record Tiësto</option><option value="chill">Record Chill-Out</option><option value="custom">Свой поток…</option></select></div>
+        <div class="row2" style="margin-top:9px"><div class="field"><label for="qualitySelect">Качество потока</label><select id="qualitySelect"><option value="96">96 kbps</option><option value="320">320 kbps</option></select></div><div class="field"><label for="stationName">Название (своё)</label><input id="stationName" type="text" placeholder="Моя станция" maxlength="64"></div></div>
+        <div class="field" style="margin-top:9px"><label for="radioUrl">URL потока / 96 kbps</label><input id="radioUrl" type="url" inputmode="url" placeholder="https://…" autocomplete="url"></div>
+        <div class="field" style="margin-top:9px"><label for="radioUrl320">URL альтернативного потока / 320 kbps (необязательно)</label><input id="radioUrl320" type="url" inputmode="url" placeholder="https://…" autocomplete="url"></div>
+        <div class="row2" style="margin-top:9px"><button class="btn primary" id="playRadioBtn">▶ Подключиться</button><button class="btn" id="saveStationBtn">＋ Сохранить станцию</button></div>
+        <p class="hint">96/320 — это выбор URL потока, а не перекодирование. Если у станции нет отдельного URL 320, приложение не может поднять битрейт самостоятельно.</p>
+        <div class="sep"></div><div class="panel-head" style="margin-bottom:8px"><h2>Быстрый выбор</h2><span class="subtle">потоки AAC+</span></div>
+        <div class="station-row" id="stationQuick"><button data-station="record" class="selected">Record</button><button data-station="russianmix">Russian Mix</button><button data-station="deep">Deep</button><button data-station="tiesto">Tiësto</button><button data-station="chill">Chill-Out</button></div>
+        <p class="hint">Публичные потоковые адреса могут меняться или быть недоступны в отдельных регионах. При ошибке проверьте URL в обычном браузере.</p>
+      </section>
+
+      <section class="panel hidden" id="filesPanel" aria-labelledby="filesHeading">
+        <div class="panel-head"><h2 id="filesHeading">Локальная библиотека</h2><span class="badge">MP3 · FLAC · WAV</span></div>
+        <label class="dropzone" for="filePicker" style="display:block;cursor:pointer"><strong>＋ Добавить аудиофайлы</strong>Выберите один или несколько файлов с устройства</label><input id="filePicker" type="file" accept="audio/mpeg,audio/mp3,audio/flac,audio/wav,audio/x-wav,.mp3,.flac,.wav,.wave,.m4a,.aac,.ogg" multiple class="hidden">
+        <div class="panel-head" style="margin-top:14px;margin-bottom:8px"><h2>Плейлист</h2><button class="btn small" id="clearPlaylistBtn">Очистить</button></div>
+        <div class="playlist" id="playlist"><div class="hint">Добавьте локальные файлы — список появится здесь.</div></div>
+        <p class="hint">Поддержка FLAC зависит от кодеков конкретного браузера/WebView. Файлы воспроизводятся с устройства и не загружаются на сервер.</p>
+      </section>
+    </div>
+
+    <div class="stack">
+      <section class="panel" aria-labelledby="eqHeading">
+        <div class="panel-head"><h2 id="eqHeading">16-полосный эквалайзер</h2><span class="badge">±12 dB</span></div>
+        <div class="eq-presets"><button class="pill-btn active" data-preset="flat">Flat</button><button class="pill-btn" data-preset="club">Club</button><button class="pill-btn" data-preset="bass">Bass</button><button class="pill-btn" data-preset="vocal">Vocal</button><button class="pill-btn" data-preset="night">Night</button><button class="pill-btn" id="autoEqBtn">Auto-EQ*</button></div>
+        <div class="eq-graph"><canvas id="eqCanvas" aria-label="Кривая эквалайзера"></canvas></div>
+        <div class="eq-bands" id="eqBands" aria-label="Полосы эквалайзера"></div>
+        <div class="eq-foot"><span>−12 dB</span><span id="eqProfileLabel">Профиль: Flat</span><span>+12 dB</span></div>
+        <p class="hint">* Auto-EQ задаёт стартовую кривую-шаблон. Реальная коррекция АЧХ салона требует измерения микрофоном и анализа, например REW.</p>
+      </section>
+
+      <section class="panel" aria-labelledby="timeHeading">
+        <div class="panel-head"><h2 id="timeHeading">Поканальные задержки</h2><span class="badge">DISTANCE → ms</span></div>
+        <div class="row3">
+          <div class="field"><label for="distL">Левый, см</label><input type="number" id="distL" min="20" max="500" step="1" value="78"></div>
+          <div class="field"><label for="distR">Правый, см</label><input type="number" id="distR" min="20" max="500" step="1" value="127"></div>
+          <div class="field"><label for="distSub">Сабвуфер, см</label><input type="number" id="distSub" min="20" max="500" step="1" value="180"></div>
+        </div>
+        <div class="row2" style="margin-top:9px"><div class="field"><label>Задержка L</label><div class="distance-note" style="margin:0"><b class="mini-value" id="delayLValue">2.97 ms</b></div></div><div class="field"><label>Задержка R</label><div class="distance-note" style="margin:0"><b class="mini-value" id="delayRValue">1.55 ms</b></div></div></div>
+        <div class="distance-note">Расчёт компенсирует более близкие динамики относительно максимальной дистанции. Дистанция сабвуфера здесь используется как опорная: браузер не получает отдельный физический выход сабвуфера. Скорость звука принята 343 м/с.</div>
+        <div class="section-tag">Стерео и тон</div>
+        <div class="range-row"><label for="balance">Баланс L/R</label><input id="balance" type="range" min="-1" max="1" step="0.01" value="0"><span class="range-value" id="balanceValue">Центр</span></div>
+        <div class="range-row"><label for="width">Stereo Width</label><input id="width" type="range" min="0" max="2.5" step="0.01" value="1"><span class="range-value" id="widthValue">100%</span></div>
+        <div class="range-row"><label for="warm">Warm Drive</label><input id="warm" type="range" min="0" max="1" step="0.01" value="0"><span class="range-value" id="warmValue">0%</span></div>
+        <div class="range-row"><label for="lowpass">Low-Pass</label><input id="lowpass" type="range" min="800" max="20000" step="100" value="20000"><span class="range-value" id="lowpassValue">20 kHz</span></div>
+      </section>
+
+      <section class="panel" aria-labelledby="fxHeading">
+        <div class="panel-head"><h2 id="fxHeading">Пространство и эффекты</h2><span class="badge">SEND FX</span></div>
+        <div class="effects-grid">
+          <div class="effect-card"><label for="reverbMix">Hall / Reverb <span id="reverbValue" class="mini-value">0%</span></label><input id="reverbMix" type="range" min="0" max="0.65" step="0.01" value="0"></div>
+          <div class="effect-card"><label for="echoMix">Ping-Pong Echo <span id="echoValue" class="mini-value">0%</span></label><input id="echoMix" type="range" min="0" max="0.6" step="0.01" value="0"></div>
+          <div class="effect-card"><label for="echoTime">Delay time <span id="echoTimeValue" class="mini-value">280 ms</span></label><input id="echoTime" type="range" min="80" max="700" step="10" value="280"></div>
+          <div class="effect-card"><label for="feedback">Feedback <span id="feedbackValue" class="mini-value">22%</span></label><input id="feedback" type="range" min="0" max="0.75" step="0.01" value="0.22"></div>
+        </div>
+        <div class="field" style="margin-top:10px"><label for="reverbRoom">Размер акустического пространства</label><select id="reverbRoom"><option value="0.45">Small Room · 0.45 s</option><option value="1.2">Studio · 1.2 s</option><option value="2.2" selected>Concert Hall · 2.2 s</option><option value="3.6">Large Hall · 3.6 s</option></select></div>
+        <div class="section-tag">Автоматика</div>
+        <div class="toggle-row"><div><strong>Компенсация задержек</strong><small>Пересчёт по расстояниям L/R/Sub</small></div><input class="switch" id="delayEnabled" type="checkbox" checked></div>
+        <div class="toggle-row"><div><strong>Сцена от датчиков</strong><small>Небольшая динамическая коррекция pan/delay</small></div><input class="switch" id="sceneFollow" type="checkbox"></div>
+        <div class="toggle-row"><div><strong>Автопереподключение радио</strong><small>Повтор попытки с увеличением интервала</small></div><input class="switch" id="reconnectEnabled" type="checkbox" checked></div>
+      </section>
+
+      <section class="panel" aria-labelledby="sensorHeading">
+        <div class="panel-head"><h2 id="sensorHeading">Автомобильная сцена</h2><span class="badge" id="sensorBadge">SENSORS OFF</span></div>
+        <button class="btn" id="sensorBtn" style="width:100%">◎ Разрешить и включить датчики</button>
+        <div class="sensor-values"><div class="sensor-box"><span>Heading / α</span><b id="sensorAlpha">—°</b></div><div class="sensor-box"><span>Крен / γ</span><b id="sensorGamma">—°</b></div><div class="sensor-box"><span>Scene pan</span><b id="sensorPan">0.00</b></div></div>
+        <div class="scene-stage" id="sceneStage"><div class="stage-label">VIRTUAL SOUNDSTAGE</div><div class="scene-readout" id="sceneReadout">CENTER</div><div class="car-cabin"><span class="stage-speaker left"></span><span class="stage-speaker right"></span><span class="stage-sub"></span><span class="scene-beam" id="sceneBeam"></span><span class="scene-listener" id="sceneListener"></span></div></div>
+        <div class="notice" id="sensorNote">Датчики выключены. На iOS разрешение запрашивается только после нажатия. Alpha/компас и gamma описывают ориентацию устройства, а не гарантированно реальный курс и крен автомобиля.</div>
+        <p class="hint">В режиме follow используется сглаженное изменение heading (если доступен компас) и gamma. Это экспериментальная мягкая коррекция сцены, а не автомобильный датчик скорости/ускорения.</p>
+      </section>
+
+      <section class="panel" aria-labelledby="systemHeading">
+        <div class="panel-head"><h2 id="systemHeading">Система</h2><span class="badge">WEBVIEW</span></div>
+        <div class="toggle-row"><div><strong>Не гасить экран</strong><small>Screen Wake Lock, если поддерживается</small></div><input class="switch" id="wakeLockToggle" type="checkbox"></div>
+        <div class="toggle-row"><div><strong>Медиа-контролы ОС</strong><small>MediaSession / экран блокировки, если доступно</small></div><span class="badge" id="mediaSessionState">AUTO</span></div>
+        <div class="toggle-row"><div><strong>Аудиодвижок</strong><small id="contextState">Создаётся по первому нажатию Play</small></div><span class="badge" id="contextBadge">READY</span></div>
+        <p class="hint">Фоновый звук и кнопки экрана блокировки зависят от Telegram WebView, Android/iOS и настроек энергосбережения. Веб-приложение не может гарантировать работу после принудительного закрытия.</p>
+      </section>
+    </div>
+  </main>
+  <footer class="footer">TMA Audio Studio · Single-file prototype · Настройки DSP применяются локально</footer>
+</div>
+
+<div class="pocket-overlay" id="pocketOverlay" aria-hidden="true"><div class="pocket-art">TMA · CAR AUDIO</div><div class="pocket-controls"><button id="pocketPlay" aria-label="Пауза/воспроизведение">▶</button></div><div class="pocket-hint">Энергосберегающий чёрный экран. Для выхода коснитесь кнопки ниже.</div><button class="pocket-exit" id="pocketExit">ВЫЙТИ ИЗ КАРМАННОГО РЕЖИМА</button></div>
+<div class="spectrum-modal" id="spectrumModal" aria-hidden="true"><div class="modal-head"><h2>LIVE SPECTRUM</h2><div style="display:flex;gap:8px"><button class="btn small" id="modalFullBtn">⛶ Fullscreen</button><button class="icon-btn" id="closeSpectrumBtn" aria-label="Закрыть спектр">✕</button></div></div><canvas class="modal-canvas" id="modalSpectrumCanvas"></canvas><div class="modal-caption" id="modalSpectrumCaption">REAL FFT WHEN DSP / LOCAL AUDIO IS ACTIVE</div></div>
+<audio id="mediaAudio" preload="metadata" playsinline crossorigin="anonymous"></audio><audio id="directRadio" preload="none" playsinline></audio>
+<div id="toast" role="status" aria-live="polite" style="position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 16px);transform:translate(-50%,16px);z-index:10001;max-width:min(92vw,520px);padding:10px 14px;background:#17222d;border:1px solid #375062;border-radius:12px;color:#e4f4ff;font-size:12px;box-shadow:0 8px 28px #0008;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s"></div>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const safeCall = (fn, fallback = null) => { try { return fn(); } catch (_) { return fallback; } };
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const fmtTime = seconds => { if (!Number.isFinite(seconds) || seconds < 0) return '00:00'; const m = Math.floor(seconds / 60); const s = Math.floor(seconds % 60); return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; };
+const EQ_FREQS = [25,40,63,100,160,250,400,630,1000,1600,2500,4000,6300,10000,14000,18000];
+const EQ_LABELS = ['25','40','63','100','160','250','400','630','1k','1.6k','2.5k','4k','6.3k','10k','14k','18k'];
+const STATIONS = {
+  record:{name:'Radio Record',url96:'https://radiorecord.hostingradio.ru/rr_main96.aacp',url320:''},
+  russianmix:{name:'Record Russian Mix',url96:'https://radiorecord.hostingradio.ru/rus96.aacp',url320:''},
+  deep:{name:'Record Deep',url96:'https://radiorecord.hostingradio.ru/deep96.aacp',url320:''},
+  tiesto:{name:'Record Tiësto',url96:'https://radiorecord.hostingradio.ru/tiesto96.aacp',url320:''},
+  chill:{name:'Record Chill-Out',url96:'https://radiorecord.hostingradio.ru/chil96.aacp',url320:''}
+};
+const PRESETS = {
+  flat: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  club: [3,4,4,3,1,0,-1,-1,0,1,2,3,3,2,1,0],
+  bass: [6,5,4,3,2,1,0,0,0,0,0,0,0,0,-1,-2],
+  vocal:[-2,-2,-1,0,1,2,2,3,3,2,1,0,1,1,0,-1],
+  night:[-3,-2,-1,1,2,2,1,0,1,2,1,0,-1,-2,-3,-4],
+  auto: [-2,-1,0,1.5,2,1.5,.5,0,.5,1.2,1.5,1,0,-.5,-1,-1.5]
+};
+let audioCtx = null, graph = null, analyser = null, sourceNode = null, activeMode = 'radio', isPlaying = false;
+let radioDspEnabled = false, currentStationId = 'record', currentUrl = STATIONS.record.url96, currentQuality = '96';
+let playlist = [], currentTrackIndex = -1, objectUrls = new Map();
+let reconnectTimer = null, reconnectDelay = 1800, reconnectCount = 0, reconnectToken = 0, manualStop = false;
+let wakeSentinel = null, sensorActive = false, sensorHeading = null, sensorPrevTime = 0, sensorPanSmoothed = 0, sensorGamma = 0, sensorAlpha = null;
+let toastTimer = null, rafId = null;
+const mediaAudio = $('mediaAudio'), directRadio = $('directRadio');
+let activeAudio = directRadio;
+
+function toast(message, type='info') {
+  const el = $('toast'); el.textContent = message; el.style.borderColor = type==='warn' ? '#8b6738' : type==='error' ? '#8b3942' : '#375062';
+  el.style.opacity = '1'; el.style.transform = 'translate(-50%,0)'; clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.style.opacity='0'; el.style.transform='translate(-50%,16px)'; }, 3200);
+}
+function setStatus(text, mode='idle') {
+  $('statusText').textContent = text;
+  $('statusDot').className = 'dot' + (mode==='live' ? ' live' : mode==='warn' ? ' warn' : '');
+}
+function isLocalMode(){ return activeMode === 'files'; }
+function formatStreamLabel(url){ const u=String(url||'').toLowerCase(); if (u.includes('.aac') || u.includes('aacp')) return 'AAC+ / LIVE'; if (u.includes('.mp3')) return 'MP3 / LIVE'; if (u.includes('.m3u8')) return 'HLS / LIVE'; return 'LIVE STREAM'; }
+function updateTrackMeta(){
+  $('sourceBadge').textContent = activeMode==='files' ? 'LOCAL FILE' : (radioDspEnabled?'RADIO · DSP':'ONLINE RADIO');
+  $('formatBadge').textContent = activeMode==='files' ? (playlist[currentTrackIndex]?.file.name.split('.').pop().toUpperCase()||'AUDIO') : formatStreamLabel(currentUrl);
+  $('qualityBadge').textContent = activeMode==='files' ? 'LOCAL' : `${currentQuality} kbps*`;
+  $('radioDsp').textContent=radioDspEnabled?'DSP радио: ВКЛ':'В обход DSP'; $('radioDsp').classList.toggle('active',radioDspEnabled); $('radioDsp').setAttribute('aria-pressed',String(radioDspEnabled));
+  $('spectrumLabel').textContent = (activeMode==='files'||radioDspEnabled) ? 'REAL SPECTRUM · FFT' : 'DSP OFF · SPECTRUM UNAVAILABLE';
+  $('engineStatus').textContent = !audioCtx ? 'DSP: ожидание' : audioCtx.state==='running' ? 'DSP: active' : `DSP: ${audioCtx.state}`;
+}
+function setupAudioGraph(){
+  if (audioCtx && graph) return;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) { toast('Web Audio API не поддерживается этим браузером', 'error'); return; }
+  audioCtx = new AC({latencyHint:'playback'});
+  const inputGain = audioCtx.createGain(); inputGain.gain.value=1;
+  const panner = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : audioCtx.createGain();
+  const splitter = audioCtx.createChannelSplitter(2);
+  const delayL = audioCtx.createDelay(0.25), delayR = audioCtx.createDelay(0.25);
+  const merger = audioCtx.createChannelMerger(2);
+  const msSplit = audioCtx.createChannelSplitter(2);
+  const midFromL=audioCtx.createGain(), midFromR=audioCtx.createGain(), sideFromL=audioCtx.createGain(), sideFromR=audioCtx.createGain();
+  const midSum=audioCtx.createGain(), sideSum=audioCtx.createGain(), midToL=audioCtx.createGain(), midToR=audioCtx.createGain(), sideToL=audioCtx.createGain(), sideToR=audioCtx.createGain();
+  midFromL.gain.value=.5; midFromR.gain.value=.5; sideFromL.gain.value=.5; sideFromR.gain.value=-.5;
+  midToL.gain.value=1; midToR.gain.value=1; sideToL.gain.value=1; sideToR.gain.value=-1;
+  const widthMerger = audioCtx.createChannelMerger(2);
+  splitter.connect(delayL,0); splitter.connect(delayR,1); delayL.connect(merger,0,0); delayR.connect(merger,0,1);
+  merger.connect(msSplit);
+  msSplit.connect(midFromL,0); msSplit.connect(midFromR,1); msSplit.connect(sideFromL,0); msSplit.connect(sideFromR,1);
+  midFromL.connect(midSum); midFromR.connect(midSum); sideFromL.connect(sideSum); sideFromR.connect(sideSum);
+  midSum.connect(midToL); midToL.connect(widthMerger,0,0); midSum.connect(midToR); midToR.connect(widthMerger,0,1);
+  sideSum.connect(sideToL); sideToL.connect(widthMerger,0,0); sideSum.connect(sideToR); sideToR.connect(widthMerger,0,1);
+  let previous = widthMerger;
+  const eqNodes = EQ_FREQS.map((freq,i)=>{ const f=audioCtx.createBiquadFilter(); f.type='peaking'; f.frequency.value=freq; f.Q.value=1.05; f.gain.value=0; previous.connect(f); previous=f; return f; });
+  const lp=audioCtx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=20000; lp.Q.value=.707; previous.connect(lp);
+  const shaper=audioCtx.createWaveShaper(); shaper.curve=makeDistortionCurve(0); shaper.oversample='2x'; lp.connect(shaper);
+  const dry=audioCtx.createGain(); dry.gain.value=1; shaper.connect(dry);
+  const convolver=audioCtx.createConvolver(); convolver.buffer=makeImpulse(audioCtx,Number($('reverbRoom').value||2.2),2.3);
+  const reverbGain=audioCtx.createGain(); reverbGain.gain.value=0; shaper.connect(convolver); convolver.connect(reverbGain);
+  const echoDelayL=audioCtx.createDelay(1.2), echoDelayR=audioCtx.createDelay(1.2), echoFbL=audioCtx.createGain(), echoFbR=audioCtx.createGain();
+  const echoInSplit=audioCtx.createChannelSplitter(2), echoOutMerge=audioCtx.createChannelMerger(2), echoWet=audioCtx.createGain();
+  echoFbL.gain.value=.22; echoFbR.gain.value=.22; echoDelayL.delayTime.value=.28; echoDelayR.delayTime.value=.28; echoWet.gain.value=0;
+  shaper.connect(echoInSplit); echoInSplit.connect(echoDelayL,0); echoInSplit.connect(echoDelayR,1);
+  echoDelayL.connect(echoFbL); echoFbL.connect(echoDelayR); echoDelayR.connect(echoFbR); echoFbR.connect(echoDelayL);
+  echoDelayL.connect(echoOutMerge,0,0); echoDelayR.connect(echoOutMerge,0,1); echoOutMerge.connect(echoWet);
+  const master=audioCtx.createGain(); master.gain.value=Number($('masterVolume').value);
+  dry.connect(master); reverbGain.connect(master); echoWet.connect(master);
+  const analyserNode=audioCtx.createAnalyser(); analyserNode.fftSize=2048; analyserNode.smoothingTimeConstant=.82;
+  master.connect(analyserNode); analyserNode.connect(audioCtx.destination);
+  sourceNode = audioCtx.createMediaElementSource(mediaAudio); sourceNode.connect(inputGain); inputGain.connect(panner); panner.connect(splitter);
+  graph={inputGain,panner,splitter,delayL,delayR,merger,eqNodes,lp,shaper,dry,convolver,reverbGain,echoDelayL,echoDelayR,echoFbL,echoFbR,echoWet,master,analyser:analyserNode,widthMerger,midSum,sideSum,sideToL,sideToR}; analyser=analyserNode;
+  getEQValues().forEach((v,i)=>{ graph.eqNodes[i].gain.value=Number(v); }); drawEQCurve(); applyDistances(); updateFX(); updateTrackMeta();
+  $('contextState').textContent='Web Audio готов'; $('contextBadge').textContent='ACTIVE';
+  audioCtx.onstatechange=()=>{ $('contextState').textContent=`AudioContext: ${audioCtx.state}`; $('contextBadge').textContent=audioCtx.state.toUpperCase(); updateTrackMeta(); };
+}
+function makeDistortionCurve(amount){
+  const n=44100, curve=new Float32Array(n);
+  if(amount<.01){ for(let i=0;i<n;i++) curve[i]=2*i/(n-1)-1; return curve; }
+  const drive=1+amount*3, normalizer=Math.tanh(drive);
+  for(let i=0;i<n;i++){ const x=i*2/(n-1)-1; curve[i]=Math.tanh(x*drive)/normalizer; }
+  return curve;
+}
+function makeImpulse(ctx, seconds, decay){
+  const rate=ctx.sampleRate, length=Math.max(1,Math.floor(rate*seconds)), impulse=ctx.createBuffer(2,length,rate);
+  for(let ch=0;ch<2;ch++){ const data=impulse.getChannelData(ch); for(let i=0;i<length;i++) data[i]=(Math.random()*2-1)*Math.pow(1-i/length,decay); }
+  return impulse;
+}
+function applyEQ(values, label='Custom'){
+  values.forEach((v,i)=>{ const slider=$(`eq-${i}`); if(slider) slider.value=String(v); if(graph) graph.eqNodes[i].gain.setTargetAtTime(Number(v),audioCtx.currentTime,.025); const d=$(`eqdb-${i}`); if(d) d.textContent=`${Number(v)>0?'+':''}${Number(v).toFixed(1)}`; });
+  $('eqProfileLabel').textContent=`Профиль: ${label}`; drawEQCurve();
+  document.querySelectorAll('[data-preset]').forEach(b=>b.classList.toggle('active',b.dataset.preset===label.toLowerCase()));
+}
+function getEQValues(){return EQ_FREQS.map((_,i)=>Number($(`eq-${i}`)?.value||0));}
+function buildEQ(){
+  const box=$('eqBands'); box.innerHTML='';
+  EQ_FREQS.forEach((freq,i)=>{
+    const wrap=document.createElement('div'); wrap.className='eq-band';
+    const label=document.createElement('span'); label.className='freq'; label.textContent=EQ_LABELS[i];
+    const range=document.createElement('input'); range.type='range'; range.min='-12'; range.max='12'; range.step='.5'; range.value='0'; range.id=`eq-${i}`; range.setAttribute('aria-label',`${freq} Hz`);
+    const val=document.createElement('span'); val.className='db'; val.id=`eqdb-${i}`; val.textContent='0.0';
+    range.addEventListener('input',()=>{ if(graph) graph.eqNodes[i].gain.setTargetAtTime(Number(range.value),audioCtx.currentTime,.025); val.textContent=`${Number(range.value)>0?'+':''}${Number(range.value).toFixed(1)}`; $('eqProfileLabel').textContent='Профиль: Custom'; document.querySelectorAll('[data-preset]').forEach(b=>b.classList.remove('active')); drawEQCurve(); });
+    wrap.append(label,range,val); box.append(wrap);
+  });
+}
+function drawEQCurve(){
+  const c=$('eqCanvas'), ctx=c.getContext('2d'); if(!ctx) return; const dpr=Math.min(window.devicePixelRatio||1,2); const w=c.clientWidth||300,h=c.clientHeight||100;
+  if(c.width!==Math.round(w*dpr)||c.height!==Math.round(h*dpr)){c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);} ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle='#1d2b38';ctx.lineWidth=1; for(let i=0;i<5;i++){const y=8+i*(h-16)/4;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+  const vals=getEQValues(); const points=vals.map((v,i)=>({x:10+(w-20)*i/(vals.length-1),y:h/2-v*(h*.38/12)}));
+  ctx.beginPath(); points.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.strokeStyle='#4fd3e6';ctx.lineWidth=2.3;ctx.shadowColor='#29a9c7';ctx.shadowBlur=8;ctx.stroke();ctx.shadowBlur=0;
+  ctx.lineTo(points[points.length-1].x,h/2);ctx.lineTo(points[0].x,h/2);ctx.closePath();const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#2db4d533');g.addColorStop(1,'#2db4d500');ctx.fillStyle=g;ctx.fill();
+}
+function applyDistances(){
+  const l=clamp(Number($('distL').value)||78,20,500), r=clamp(Number($('distR').value)||127,20,500), sub=clamp(Number($('distSub').value)||180,20,500); const max=Math.max(l,r,sub);
+  const left=$('delayEnabled').checked ? (max-l)/34.3 : 0, right=$('delayEnabled').checked ? (max-r)/34.3 : 0;
+  $('delayLValue').textContent=`${left.toFixed(2)} ms`; $('delayRValue').textContent=`${right.toFixed(2)} ms`;
+  if(graph){ graph.delayL.delayTime.setTargetAtTime(left/1000,audioCtx.currentTime,.035); graph.delayR.delayTime.setTargetAtTime(right/1000,audioCtx.currentTime,.035); }
+  if(graph && sensorPanSmoothed && $('sceneFollow').checked) applySceneMotion(sensorPanSmoothed);
+}
+function updateFX(){ if(!graph)return;
+  const v=Number($('masterVolume').value);graph.master.gain.setTargetAtTime(v,audioCtx.currentTime,.02);
+  if(graph.panner.pan) graph.panner.pan.setTargetAtTime(Number($('balance').value),audioCtx.currentTime,.03);
+  const width=Number($('width').value); graph.midSum.gain.setTargetAtTime(1,audioCtx.currentTime,.03); graph.sideToL.gain.setTargetAtTime(width,audioCtx.currentTime,.03); graph.sideToR.gain.setTargetAtTime(-width,audioCtx.currentTime,.03);
+  const warm=Number($('warm').value);graph.shaper.curve=makeDistortionCurve(warm);graph.lp.frequency.setTargetAtTime(Number($('lowpass').value),audioCtx.currentTime,.04);
+  graph.reverbGain.gain.setTargetAtTime(Number($('reverbMix').value),audioCtx.currentTime,.04);
+  const et=Number($('echoTime').value)/1000; graph.echoDelayL.delayTime.setTargetAtTime(et,audioCtx.currentTime,.04);graph.echoDelayR.delayTime.setTargetAtTime(et,audioCtx.currentTime,.04);
+  const fb=Number($('feedback').value); graph.echoFbL.gain.setTargetAtTime(fb,audioCtx.currentTime,.04);graph.echoFbR.gain.setTargetAtTime(fb,audioCtx.currentTime,.04);graph.echoWet.gain.setTargetAtTime(Number($('echoMix').value),audioCtx.currentTime,.04);
+  $('balanceValue').textContent=Math.abs(Number($('balance').value))<.03?'Центр':Number($('balance').value)<0?`L ${Math.round(-Number($('balance').value)*100)}%`:`R ${Math.round(Number($('balance').value)*100)}%`;
+  $('widthValue').textContent=`${Math.round(width*100)}%`; $('warmValue').textContent=`${Math.round(warm*100)}%`; const lpv=Number($('lowpass').value);$('lowpassValue').textContent=lpv>=19500?'20 kHz':lpv>=1000?`${(lpv/1000).toFixed(1)} kHz`:`${lpv} Hz`;
+  $('reverbValue').textContent=`${Math.round(Number($('reverbMix').value)*100)}%`; $('echoValue').textContent=`${Math.round(Number($('echoMix').value)*100)}%`; $('echoTimeValue').textContent=`${Math.round(et*1000)} ms`; $('feedbackValue').textContent=`${Math.round(fb*100)}%`;
+}
+function loadSourceIntoDSP(url){
+  setupAudioGraph(); if(!audioCtx)return;
+  activeAudio=mediaAudio; mediaAudio.crossOrigin='anonymous';
+  if(mediaAudio.src!==url) mediaAudio.src=url;
+  mediaAudio.load(); updateTrackMeta();
+}
+function activeStreamURL(){
+  const station = STATIONS[currentStationId] || null;
+  if(currentStationId==='custom'){
+    const q=$('qualitySelect').value; const url96=$('radioUrl').value.trim(), url320=$('radioUrl320').value.trim();
+    if(q==='320' && !url320){if(url96){$('qualitySelect').value='96';currentQuality='96';toast('Для 320 kbps нужен отдельный URL. Оставлен поток 96/основной.','warn');return url96;}return '';}
+    return q==='320' ? url320 : (url96 || url320);
+  }
+  if(!station)return $('radioUrl').value.trim();
+  if(currentQuality==='320' && station.url320)return station.url320;
+  if(currentQuality==='320' && !station.url320){ toast('У этой станции нет заданного URL 320 kbps; оставлен доступный поток 96 kbps','warn'); $('qualitySelect').value='96';currentQuality='96'; }
+  return station.url96;
+}
+function updateRadioForm(){
+  const station=STATIONS[currentStationId]||{name:$('stationName').value||'Моя станция',url96:'',url320:''};
+  $('stationName').value=String(currentStationId).startsWith('custom-')?station.name:'';
+  $('radioUrl').value=station.url96||''; $('radioUrl320').value=station.url320||'';
+  document.querySelectorAll('#stationQuick button').forEach(b=>b.classList.toggle('selected',b.dataset.station===currentStationId));
+}
+function setMode(mode){
+  if(mode!==activeMode && isPlaying){
+    mediaAudio.pause(); directRadio.pause(); isPlaying=false; $('playBtn').textContent='▶'; $('pocketPlay').textContent='▶';
+    setStatus('Источник изменён · воспроизведение остановлено','idle');
+  }
+  activeMode=mode; const isFiles=mode==='files';
+  $('radioTab').classList.toggle('active',!isFiles); $('filesTab').classList.toggle('active',isFiles);
+  $('radioTab').setAttribute('aria-selected',String(!isFiles));$('filesTab').setAttribute('aria-selected',String(isFiles));
+  $('radioPanel').classList.toggle('hidden',isFiles);$('filesPanel').classList.toggle('hidden',!isFiles);
+  if(isFiles){$('trackSubtitle').textContent=playlist[currentTrackIndex]?.file.name||'Добавьте локальные аудиофайлы'; $('trackTitle').textContent=playlist[currentTrackIndex]?.title||'Локальная библиотека';$('seekbar').disabled=!playlist.length;}
+  else { $('trackTitle').textContent=(STATIONS[currentStationId]?.name)||$('stationName').value||'Моя станция';$('trackSubtitle').textContent=isPlaying?'Интернет-поток':'Выберите станцию и нажмите Play'; }
+  updateTrackMeta();
+}
+function stopReconnect(){ if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null;} }
+function scheduleReconnect(reason='Поток недоступен'){
+  if(activeMode!=='radio'||!$('reconnectEnabled').checked||manualStop||!currentUrl||reconnectTimer)return;
+  stopReconnect();const delay=Math.min(30000,reconnectDelay);setStatus(`${reason} · повтор через ${Math.round(delay/1000)} с`,'warn');
+  reconnectTimer=setTimeout(()=>{reconnectTimer=null;reconnectCount++;reconnectDelay=Math.min(30000,Math.round(reconnectDelay*1.8));reconnectToken++;connectRadio(true);},delay);
+}
+function resetReconnect(){stopReconnect();reconnectDelay=1800;reconnectCount=0;}
+async function connectRadio(isRetry=false){
+  currentQuality=$('qualitySelect').value;currentUrl=activeStreamURL();
+  if(!currentUrl){toast('Укажите URL радиопотока','error');return;}
+  if(!/^https?:\/\//i.test(currentUrl)){toast('URL должен начинаться с http:// или https://','error');return;}
+  manualStop=false; if(!isRetry) resetReconnect(); const token=++reconnectToken;
+  try{
+    if(radioDspEnabled && !(window.AudioContext || window.webkitAudioContext)){radioDspEnabled=false;$('radioDsp').classList.remove('active');$('radioDsp').setAttribute('aria-pressed','false');toast('Web Audio API отсутствует — радио переключено в прямой режим.','warn');}
+    if(radioDspEnabled){
+      directRadio.pause(); loadSourceIntoDSP(currentUrl);
+      if(audioCtx.state==='suspended') await audioCtx.resume();
+      activeAudio=mediaAudio; await mediaAudio.play();
+    } else {
+      mediaAudio.pause(); directRadio.removeAttribute('crossorigin'); if(directRadio.src!==currentUrl)directRadio.src=currentUrl;directRadio.load();activeAudio=directRadio;
+      await directRadio.play();
+    }
+    if(token!==reconnectToken)return;
+    isPlaying=true; resetReconnect(); $('playBtn').textContent='Ⅱ';$('pocketPlay').textContent='Ⅱ';$('radioDsp').textContent=radioDspEnabled?'DSP радио: ВКЛ':'В обход DSP';$('radioDsp').classList.toggle('active',radioDspEnabled);
+    $('trackTitle').textContent=(STATIONS[currentStationId]?.name)||$('stationName').value.trim()||'Моя станция';$('trackSubtitle').textContent=radioDspEnabled?'Поток через Web Audio DSP':'Прямой интернет-поток';
+    $('seekbar').disabled=true;$('currentTime').textContent='LIVE';$('totalTime').textContent='STREAM';setStatus(isRetry?'Поток восстановлен':'Радио подключено','live');updateTrackMeta();updateMediaSession();
+    if(radioDspEnabled)startCorsSilenceWatch();
+  }catch(err){
+    isPlaying=false;$('playBtn').textContent='▶';$('pocketPlay').textContent='▶';setStatus(`Ошибка потока: ${err?.message||'не удалось подключиться'}`,'warn');
+    if(err?.name==='NotAllowedError')toast('Нажмите Play ещё раз: браузер заблокировал запуск без действия пользователя','warn');
+    else if(!isRetry)toast('Не удалось запустить поток. Проверьте URL, сеть и доступность станции.','error');
+    scheduleReconnect('Ошибка соединения');
+  }
+}
+let corsWatchTimer=null;
+function startCorsSilenceWatch(){
+  clearInterval(corsWatchTimer); let ticks=0; const token=reconnectToken;
+  corsWatchTimer=setInterval(()=>{
+    if(!radioDspEnabled||activeMode!=='radio'||!isPlaying||token!==reconnectToken){clearInterval(corsWatchTimer);return;}
+    ticks++; if(ticks<8||!analyser)return;
+    const data=new Uint8Array(analyser.fftSize);analyser.getByteTimeDomainData(data);let sum=0;for(let i=0;i<data.length;i++){const x=(data[i]-128)/128;sum+=x*x;}const rms=Math.sqrt(sum/data.length);
+    if(rms<0.0015 && mediaAudio.readyState>=2){
+      clearInterval(corsWatchTimer);radioDspEnabled=false;$('radioDsp').textContent='В обход DSP';$('radioDsp').classList.remove('active');$('radioDsp').setAttribute('aria-pressed','false');
+      mediaAudio.pause();directRadio.src=currentUrl;directRadio.load();activeAudio=directRadio;directRadio.play().then(()=>{isPlaying=true;setStatus('DSP недоступен для потока · включён прямой режим','warn');toast('Вероятная CORS-блокировка: радио переключено в прямой режим без DSP','warn');updateTrackMeta();}).catch(()=>scheduleReconnect('Повтор подключения'));
+    }
+  },1000);
+}
+async function togglePlay(){
+  if(activeMode==='radio'){
+    if(isPlaying){manualStop=true;stopReconnect();mediaAudio.pause();directRadio.pause();isPlaying=false;$('playBtn').textContent='▶';$('pocketPlay').textContent='▶';setStatus('Пауза','idle');updateMediaSession();return;}
+    await connectRadio(false); return;
+  }
+  if(!playlist.length){toast('Сначала добавьте аудиофайлы','warn');return;}
+  if(!activeAudio || activeAudio!==mediaAudio){activeAudio=mediaAudio;}
+  if(isPlaying){mediaAudio.pause();isPlaying=false;$('playBtn').textContent='▶';$('pocketPlay').textContent='▶';setStatus('Пауза','idle');updateMediaSession();return;}
+  setupAudioGraph(); if(!audioCtx)return;
+  try{if(audioCtx.state==='suspended')await audioCtx.resume(); await mediaAudio.play();isPlaying=true;$('playBtn').textContent='Ⅱ';$('pocketPlay').textContent='Ⅱ';setStatus('Локальный файл воспроизводится','live');updateTrackMeta();updateMediaSession();}
+  catch(e){toast(`Не удалось запустить аудио: ${e.message||e}`,'error');}
+}
+function toggleRadioDSP(){
+  if(activeMode!=='radio'){toast('DSP радио доступен во вкладке Радио','warn');return;}
+  const wasPlaying=isPlaying; radioDspEnabled=!radioDspEnabled; $('radioDsp').setAttribute('aria-pressed',String(radioDspEnabled));$('radioDsp').classList.toggle('active',radioDspEnabled);$('radioDsp').textContent=radioDspEnabled?'DSP радио: ВКЛ':'В обход DSP';
+  if(wasPlaying){manualStop=true;mediaAudio.pause();directRadio.pause();isPlaying=false;connectRadio(false);} else {updateTrackMeta();toast(radioDspEnabled?'Радио DSP включён; если поток не поддерживает CORS, включится обход.':'Радио будет воспроизводиться напрямую без обработки.');}
+}
+function addFiles(files){
+  const accepted=Array.from(files||[]).filter(f=>/\.(mp3|flac|wav|wave|m4a|aac|ogg)$/i.test(f.name)||f.type.startsWith('audio/'));
+  if(!accepted.length){toast('Поддерживаются MP3, FLAC, WAV и другие аудиофайлы браузера','warn');return;}
+  for(const file of accepted){const url=URL.createObjectURL(file);objectUrls.set(file,url);playlist.push({file,url,title:file.name.replace(/\.[^.]+$/,''),duration:0});}
+  renderPlaylist();setMode('files');if(currentTrackIndex<0){playTrack(0,false);}toast(`Добавлено файлов: ${accepted.length}`);
+}
+function renderPlaylist(){
+  const box=$('playlist');box.innerHTML='';
+  if(!playlist.length){box.innerHTML='<div class="hint">Добавьте локальные файлы — список появится здесь.</div>';return;}
+  playlist.forEach((item,i)=>{
+    const row=document.createElement('div');row.className='playlist-item'+(i===currentTrackIndex?' current':'');
+    const num=document.createElement('div');num.className='num';num.textContent=i===currentTrackIndex&&isPlaying?'♫':String(i+1).padStart(2,'0');
+    const info=document.createElement('div');info.style.minWidth='0';const name=document.createElement('div');name.className='name';name.textContent=item.title;const meta=document.createElement('div');meta.className='meta';meta.textContent=`${item.file.name.split('.').pop().toUpperCase()} · ${formatBytes(item.file.size)}${item.duration?` · ${fmtTime(item.duration)}`:''}`;info.append(name,meta);
+    const del=document.createElement('button');del.textContent='×';del.title='Убрать из плейлиста';del.setAttribute('aria-label',`Удалить ${item.title}`);del.addEventListener('click',e=>{e.stopPropagation();removeTrack(i);});
+    row.append(num,info,del);row.addEventListener('click',()=>playTrack(i,true));box.append(row);
+  });
+}
+function formatBytes(n){if(n<1024*1024)return `${Math.max(1,Math.round(n/1024))} KB`;return `${(n/(1024*1024)).toFixed(1)} MB`;}
+function removeTrack(index){
+  const item=playlist[index]; if(!item)return; if(item.url)URL.revokeObjectURL(item.url);objectUrls.delete(item.file);
+  const wasCurrent=index===currentTrackIndex; playlist.splice(index,1);
+  if(!playlist.length){mediaAudio.pause();playlist=[];currentTrackIndex=-1;isPlaying=false;mediaAudio.removeAttribute('src');mediaAudio.load();}
+  else if(index<currentTrackIndex)currentTrackIndex--;else if(wasCurrent){currentTrackIndex=Math.min(index,playlist.length-1);playTrack(currentTrackIndex,isPlaying);}
+  renderPlaylist();updateLocalUI();
+}
+function clearPlaylist(){mediaAudio.pause();directRadio.pause();playlist.forEach(t=>{if(t.url)URL.revokeObjectURL(t.url);});playlist=[];currentTrackIndex=-1;isPlaying=false;mediaAudio.removeAttribute('src');mediaAudio.load();$('playBtn').textContent='▶';$('seekbar').value=0;$('seekbar').disabled=true;renderPlaylist();updateLocalUI();setStatus('Плейлист очищен');}
+function updateLocalUI(){if(activeMode!=='files')return;const item=playlist[currentTrackIndex];$('trackTitle').textContent=item?.title||'Локальная библиотека';$('trackSubtitle').textContent=item?item.file.name:'Добавьте локальные аудиофайлы';$('seekbar').disabled=!item;$('currentTime').textContent='00:00';$('totalTime').textContent=item?.duration?fmtTime(item.duration):'--:--';updateTrackMeta();}
+async function playTrack(index,autoplay=true){
+  if(index<0||index>=playlist.length)return;currentTrackIndex=index;setMode('files');setupAudioGraph();if(!audioCtx)return;
+  manualStop=false;mediaAudio.pause();directRadio.pause();const item=playlist[index];activeAudio=mediaAudio;radioDspEnabled=true;mediaAudio.crossOrigin='anonymous';mediaAudio.src=item.url;mediaAudio.load();
+  $('trackTitle').textContent=item.title;$('trackSubtitle').textContent=item.file.name;$('formatBadge').textContent=item.file.name.split('.').pop().toUpperCase();$('qualityBadge').textContent='LOCAL';$('seekbar').value=0;$('seekbar').disabled=false;renderPlaylist();updateMediaSession();
+  if(autoplay){try{if(audioCtx.state==='suspended')await audioCtx.resume();await mediaAudio.play();isPlaying=true;$('playBtn').textContent='Ⅱ';$('pocketPlay').textContent='Ⅱ';setStatus('Локальный файл воспроизводится','live');}catch(e){isPlaying=false;toast(`Ошибка воспроизведения: ${e.message||e}`,'error');}}
+  else {isPlaying=false;$('playBtn').textContent='▶';setStatus('Файл выбран · нажмите Play','idle');}
+  updateTrackMeta();
+}
+function stepTrack(delta){if(activeMode==='files'&&playlist.length){let next=currentTrackIndex+delta;if(next<0)next=playlist.length-1;if(next>=playlist.length)next=0;playTrack(next,true);}else if(activeMode==='radio'){const ids=Object.keys(STATIONS);let i=ids.indexOf(currentStationId);i=(i+delta+ids.length)%ids.length;currentStationId=ids[i];$('stationSelect').value=currentStationId;updateRadioForm();currentUrl=STATIONS[currentStationId].url96;if(isPlaying)connectRadio(false);else{$('trackTitle').textContent=STATIONS[currentStationId].name;updateTrackMeta();}}}
+function updateMediaSession(){
+  if(!('mediaSession' in navigator)){ $('mediaSessionState').textContent='UNAVAILABLE';return; }
+  try{
+    const title=activeMode==='files'?(playlist[currentTrackIndex]?.title||'TMA Audio Studio'):(STATIONS[currentStationId]?.name||$('stationName').value||'Internet Radio');
+    navigator.mediaSession.metadata=new MediaMetadata({title,artist:activeMode==='files'?'Local audio':'TMA Audio Studio',album:'TMA Audio Studio',artwork:[{src:'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="22" fill="#102434"/><path d="M70 15v63a17 17 0 1 1-12-16V28l41-8v48a17 17 0 1 1-12-16V15z" fill="none" stroke="#58d8eb" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/></svg>'),sizes:'128x128',type:'image/svg+xml'}]});
+    navigator.mediaSession.setActionHandler('play',()=>togglePlay());navigator.mediaSession.setActionHandler('pause',()=>{if(isPlaying)togglePlay();});navigator.mediaSession.setActionHandler('previoustrack',()=>stepTrack(-1));navigator.mediaSession.setActionHandler('nexttrack',()=>stepTrack(1));
+    navigator.mediaSession.playbackState=isPlaying?'playing':'paused';$('mediaSessionState').textContent='ACTIVE';
+  }catch(e){$('mediaSessionState').textContent='LIMITED';}
+}
+function updateSeek(){
+  if(activeMode!=='files'||!mediaAudio.duration||!Number.isFinite(mediaAudio.duration))return;
+  $('seekbar').value=Math.round(mediaAudio.currentTime/mediaAudio.duration*1000);$('currentTime').textContent=fmtTime(mediaAudio.currentTime);$('totalTime').textContent=fmtTime(mediaAudio.duration);
+}
+function requestFullscreen(){const target=document.documentElement;if(document.fullscreenElement){document.exitFullscreen?.().catch?.(()=>{});return;}const req=target.requestFullscreen||target.webkitRequestFullscreen;if(req){const result=req.call(target);if(result&&result.catch)result.catch(()=>toast('Полный экран не поддерживается в этом WebView','warn'));}else toast('Полноэкранный режим не поддерживается; приложение остаётся адаптивным.','warn');}
+async function toggleWakeLock(enabled){
+  if(!enabled){if(wakeSentinel){await wakeSentinel.release().catch(()=>{});wakeSentinel=null;}return;}
+  if(!navigator.wakeLock?.request){$('wakeLockToggle').checked=false;toast('Screen Wake Lock не поддерживается. Откройте приложение по HTTPS в совместимом браузере.','warn');return;}
+  try{wakeSentinel=await navigator.wakeLock.request('screen');wakeSentinel.addEventListener('release',()=>{wakeSentinel=null;$('wakeLockToggle').checked=false;});toast('Экран удерживается активным, пока браузер разрешает Wake Lock.');}
+  catch(e){$('wakeLockToggle').checked=false;toast(`Не удалось удержать экран: ${e.message||e}`,'warn');}
+}
+function togglePocket(show){$('pocketOverlay').classList.toggle('show',show);$('pocketOverlay').setAttribute('aria-hidden',String(!show));if(show){if(!$('wakeLockToggle').checked){$('wakeLockToggle').checked=true;toggleWakeLock(true);}}else{if(wakeSentinel){$('wakeLockToggle').checked=false;toggleWakeLock(false);}}}
+function drawSpectrumCanvas(canvas, full=false){
+  if(!canvas)return;const ctx=canvas.getContext('2d');if(!ctx)return;const dpr=Math.min(window.devicePixelRatio||1,2);const w=canvas.clientWidth||320,h=canvas.clientHeight||90;
+  if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);}ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);ctx.fillStyle='#070b10';ctx.fillRect(0,0,w,h);
+  for(let i=0;i<4;i++){ctx.strokeStyle='#14222e';ctx.beginPath();ctx.moveTo(0,h*(i+1)/5);ctx.lineTo(w,h*(i+1)/5);ctx.stroke();}
+  const live=!!(analyser&&audioCtx&&audioCtx.state==='running'&&(activeMode==='files'||radioDspEnabled));let data=null;
+  if(live){data=new Uint8Array(analyser.frequencyBinCount);analyser.getByteFrequencyData(data);}
+  const bars=full?Math.min(112,Math.floor(w/5)):Math.min(64,Math.floor(w/5));const gap=full?2:2;const bw=Math.max(1,(w-gap*(bars-1))/bars);
+  for(let i=0;i<bars;i++){
+    let v=0;
+    if(data){const bin=Math.floor(Math.pow(i/Math.max(1,bars-1),1.8)*(data.length-1));v=data[bin]/255;}
+    const y=live ? (h-7)*clamp(v*1.55,0.015,1) : 2;
+    const x=i*(bw+gap);const gradient=ctx.createLinearGradient(0,h-y,0,h);gradient.addColorStop(0,'#7aebf6');gradient.addColorStop(.55,'#31b6d2');gradient.addColorStop(1,'#235e83');ctx.fillStyle=live?gradient:'#1b2935';ctx.fillRect(x,h-y,bw,y);
+  }
+  if(!live){ctx.fillStyle='#425b6f';ctx.font='10px system-ui';ctx.fillText(activeMode==='radio'&&!radioDspEnabled?'ПРЯМОЙ ПОТОК · FFT НЕ ДОСТУПЕН':'ОЖИДАНИЕ СИГНАЛА',10,h-10);}
+}
+function animate(){drawSpectrumCanvas($('spectrumCanvas'));if($('spectrumModal').classList.contains('show'))drawSpectrumCanvas($('modalSpectrumCanvas'),true);rafId=requestAnimationFrame(animate);}
+function drawScene(){
+  if(!sensorActive||!$('sceneFollow').checked||!graph)return;
+  applySceneMotion(sensorPanSmoothed);
+}
+function applySceneMotion(factor){
+  if(!graph||!audioCtx)return;factor=clamp(Number(factor)||0,-1,1);
+  const basePan=Number($('balance').value);if(graph.panner.pan) graph.panner.pan.setTargetAtTime(clamp(basePan+factor*.18,-1,1),audioCtx.currentTime,.12);
+  const l=clamp(Number($('distL').value)||78,20,500),r=clamp(Number($('distR').value)||127,20,500),sub=clamp(Number($('distSub').value)||180,20,500),max=Math.max(l,r,sub);
+  const baseL=$('delayEnabled').checked?(max-l)/34.3:0,baseR=$('delayEnabled').checked?(max-r)/34.3:0;
+  graph.delayL.delayTime.setTargetAtTime(clamp((baseL+factor*.35)/1000,0,.25),audioCtx.currentTime,.16);
+  graph.delayR.delayTime.setTargetAtTime(clamp((baseR-factor*.35)/1000,0,.25),audioCtx.currentTime,.16);
+  $('sensorPan').textContent=factor.toFixed(2);
+  const lx=clamp(factor*33,-33,33), gy=clamp(sensorGamma*.12,-8,8);
+  $('sceneListener').style.transform=`translate(${lx}px,${gy}px)`;
+  $('sceneBeam').style.transform=`rotate(${factor*22}deg)`;
+  $('sceneStage').style.background=`radial-gradient(ellipse at ${clamp(50+factor*14,36,64)}% ${clamp(85+sensorGamma*.08,78,92)}%,#102a35 0%,#0a1118 55%,#080d13 100%)`;
+  $('sceneReadout').textContent=factor>.12?'RIGHT TURN':factor<-.12?'LEFT TURN':'CENTER';
+}
+async function startSensors(){
+  if(sensorActive){sensorActive=false;window.removeEventListener('deviceorientation',onOrientation);window.removeEventListener('deviceorientationabsolute',onOrientation);$('sensorBadge').textContent='SENSORS OFF';$('sensorBtn').textContent='◎ Разрешить и включить датчики';$('sensorNote').textContent='Датчики выключены.';return;}
+  try{
+    if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){
+      const permission=await DeviceOrientationEvent.requestPermission(true);if(permission!=='granted')throw new Error('Разрешение отклонено');
+    }
+    sensorActive=true;window.addEventListener('deviceorientation',onOrientation,{passive:true});window.addEventListener('deviceorientationabsolute',onOrientation,{passive:true});$('sensorBadge').textContent='SENSORS ON';$('sensorBtn').textContent='⦸ Выключить датчики';$('sensorNote').textContent='Данные принимаются. Закрепите устройство в штатном положении; показания могут отличаться между браузерами.';toast('Датчики включены.');
+  }catch(e){sensorActive=false;$('sensorBadge').textContent='NO PERMISSION';$('sensorNote').textContent=`Доступ к датчикам недоступен: ${e.message||'браузер не поддерживает разрешение'}`;toast('Не удалось получить доступ к датчикам. Нужен HTTPS и разрешение ОС.','warn');}
+}
+function onOrientation(e){
+  const now=performance.now();const heading=Number.isFinite(e.webkitCompassHeading)?e.webkitCompassHeading:(e.absolute&&Number.isFinite(e.alpha)?e.alpha:null);sensorGamma=Number.isFinite(e.gamma)?e.gamma:0;sensorAlpha=heading;
+  $('sensorAlpha').textContent=heading===null?'—°':`${Math.round(heading)}°`;$('sensorGamma').textContent=`${sensorGamma.toFixed(1)}°`;
+  let yawRate=0;if(heading!==null&&sensorHeading!==null&&sensorPrevTime){let delta=heading-sensorHeading;while(delta>180)delta-=360;while(delta< -180)delta+=360;const dt=Math.max(.02,(now-sensorPrevTime)/1000);yawRate=clamp(delta/dt/45,-1,1);}if(heading!==null)sensorHeading=heading;sensorPrevTime=now;
+  const tilt=clamp(sensorGamma/28,-1,1);const raw=clamp((heading===null?0:yawRate*.66)+tilt*.34,-1,1);sensorPanSmoothed=sensorPanSmoothed*.84+raw*.16;
+  if($('sceneFollow').checked)drawScene();else $('sensorPan').textContent=sensorPanSmoothed.toFixed(2);
+}
+function saveCustomStation(){
+  const name=$('stationName').value.trim()||'Моя станция';const url96=$('radioUrl').value.trim();const url320=$('radioUrl320').value.trim();
+  if(!url96&&!url320){toast('Введите URL минимум одного потока','warn');return;}
+  if((url96&&!/^https?:\/\//i.test(url96))||(url320&&!/^https?:\/\//i.test(url320))){toast('Проверьте формат URL (http/https)','warn');return;}
+  let saved=safeCall(()=>JSON.parse(localStorage.getItem('tmaCustomStations')||'[]'),[]);const id='custom-'+Date.now();saved.push({id,name,url96,url320});safeCall(()=>localStorage.setItem('tmaCustomStations',JSON.stringify(saved)));
+  STATIONS[id]={name,url96,url320};const option=document.createElement('option');option.value=id;option.textContent=name;$('stationSelect').append(option);$('stationSelect').value=id;currentStationId=id;updateRadioForm();toast('Станция сохранена на этом устройстве.');
+}
+function restoreCustomStations(){const saved=safeCall(()=>JSON.parse(localStorage.getItem('tmaCustomStations')||'[]'),[]);if(!Array.isArray(saved))return;saved.forEach(s=>{if(!s||typeof s.id!=='string'||!s.name)return;STATIONS[s.id]={name:s.name,url96:s.url96||'',url320:s.url320||''};const o=document.createElement('option');o.value=s.id;o.textContent=s.name;$('stationSelect').append(o);});}
+function bindEvents(){
+  $('radioTab').addEventListener('click',()=>setMode('radio'));$('filesTab').addEventListener('click',()=>setMode('files'));
+  $('playBtn').addEventListener('click',togglePlay);$('pocketPlay').addEventListener('click',togglePlay);$('prevBtn').addEventListener('click',()=>stepTrack(-1));$('nextBtn').addEventListener('click',()=>stepTrack(1));$('playRadioBtn').addEventListener('click',()=>{setMode('radio');connectRadio(false);});$('radioDsp').addEventListener('click',toggleRadioDSP);
+  $('stationSelect').addEventListener('change',()=>{currentStationId=$('stationSelect').value;updateRadioForm();if(currentStationId==='custom'&&!STATIONS.custom){$('radioUrl').value='';$('radioUrl320').value='';$('stationName').value='';}currentUrl=activeStreamURL();if(activeMode==='radio'){$('trackTitle').textContent=STATIONS[currentStationId]?.name||$('stationName').value||'Моя станция';$('trackSubtitle').textContent='Станция выбрана';updateTrackMeta();if(isPlaying)connectRadio(false);}});
+  $('qualitySelect').addEventListener('change',()=>{currentQuality=$('qualitySelect').value;currentUrl=activeStreamURL();$('qualityBadge').textContent=`${currentQuality} kbps*`;if(activeMode==='radio'&&isPlaying)connectRadio(false);});
+  $('stationQuick').addEventListener('click',e=>{const b=e.target.closest('button[data-station]');if(!b)return;currentStationId=b.dataset.station;$('stationSelect').value=currentStationId;updateRadioForm();currentUrl=activeStreamURL();$('trackTitle').textContent=STATIONS[currentStationId].name;if(isPlaying&&activeMode==='radio')connectRadio(false);else updateTrackMeta();});
+  $('saveStationBtn').addEventListener('click',saveCustomStation);
+  $('filePicker').addEventListener('change',e=>{addFiles(e.target.files);e.target.value='';});$('clearPlaylistBtn').addEventListener('click',clearPlaylist);
+  $('seekbar').addEventListener('input',()=>{if(activeMode==='files'&&Number.isFinite(mediaAudio.duration))mediaAudio.currentTime=Number($('seekbar').value)/1000*mediaAudio.duration;});
+  $('masterVolume').addEventListener('input',()=>{if(graph)graph.master.gain.setTargetAtTime(Number($('masterVolume').value),audioCtx.currentTime,.02);});
+  ['balance','width','warm','lowpass','reverbMix','echoMix','echoTime','feedback'].forEach(id=>$(id).addEventListener('input',updateFX));
+  $('reverbRoom').addEventListener('change',()=>{if(graph){graph.convolver.buffer=makeImpulse(audioCtx,Number($('reverbRoom').value),2.3);}toast(`Акустика: ${$('reverbRoom').selectedOptions[0].textContent}`);});
+  ['distL','distR','distSub','delayEnabled'].forEach(id=>$(id).addEventListener('input',applyDistances));$('sceneFollow').addEventListener('change',()=>{if(!$('sceneFollow').checked){if(graph)graph.panner.pan.setTargetAtTime(Number($('balance').value),audioCtx?.currentTime||0,.1);applyDistances();}else drawScene();});
+  document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>applyEQ(PRESETS[b.dataset.preset],b.dataset.preset[0].toUpperCase()+b.dataset.preset.slice(1))));
+  $('autoEqBtn').addEventListener('click',()=>{applyEQ(PRESETS.auto,'Auto-EQ template');toast('Применён шаблон коррекции. Это не измерение акустики салона.','warn');});
+  $('sensorBtn').addEventListener('click',startSensors);$('wakeLockToggle').addEventListener('change',e=>toggleWakeLock(e.target.checked));
+  $('pocketBtn').addEventListener('click',()=>togglePocket(true));$('pocketExit').addEventListener('click',()=>togglePocket(false));$('fullscreenBtn').addEventListener('click',requestFullscreen);
+  $('spectrumBtn').addEventListener('click',()=>{ $('spectrumModal').classList.add('show');$('spectrumModal').setAttribute('aria-hidden','false'); });$('closeSpectrumBtn').addEventListener('click',()=>{ $('spectrumModal').classList.remove('show');$('spectrumModal').setAttribute('aria-hidden','true'); });$('modalFullBtn').addEventListener('click',()=>{const el=$('spectrumModal');const req=el.requestFullscreen||el.webkitRequestFullscreen;if(document.fullscreenElement)document.exitFullscreen?.();else if(req){const r=req.call(el);if(r?.catch)r.catch(()=>toast('Полный экран спектра недоступен','warn'));}else toast('Полный экран недоступен в этом WebView','warn');});
+  mediaAudio.addEventListener('loadedmetadata',()=>{if(activeMode==='files'&&playlist[currentTrackIndex]){playlist[currentTrackIndex].duration=mediaAudio.duration;renderPlaylist();updateSeek();}});
+  mediaAudio.addEventListener('timeupdate',updateSeek);mediaAudio.addEventListener('ended',()=>{if(activeMode==='files'&&playlist.length)stepTrack(1);});
+  mediaAudio.addEventListener('playing',()=>{isPlaying=true;$('playBtn').textContent='Ⅱ';$('pocketPlay').textContent='Ⅱ';if(activeMode==='files')setStatus('Локальный файл воспроизводится','live');updateMediaSession();});
+  directRadio.addEventListener('playing',()=>{if(activeMode==='radio'&&!radioDspEnabled){isPlaying=true;setStatus('Радио подключено','live');updateMediaSession();}});
+  const onRadioError=e=>{if(activeMode==='radio'&&activeAudio===e.currentTarget&&!manualStop){isPlaying=false;$('playBtn').textContent='▶';scheduleReconnect('Поток оборвался');}};
+  [mediaAudio,directRadio].forEach(a=>{a.addEventListener('error',onRadioError);a.addEventListener('stalled',()=>{if(activeMode==='radio'&&activeAudio===a&&isPlaying)scheduleReconnect('Поток завис');});});
+  window.addEventListener('online',()=>{if(activeMode==='radio'&&!isPlaying&&!manualStop)connectRadio(true);});
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){if($('wakeLockToggle').checked&&!wakeSentinel)toggleWakeLock(true);if(audioCtx&&audioCtx.state==='suspended'&&isPlaying)audioCtx.resume().catch(()=>{});}});
+  window.addEventListener('resize',()=>{drawEQCurve();});window.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('spectrumModal').classList.contains('show')){$('spectrumModal').classList.remove('show');$('spectrumModal').setAttribute('aria-hidden','true');}else if($('pocketOverlay').classList.contains('show'))togglePocket(false);}});
+}
+function init(){buildEQ();restoreCustomStations();updateRadioForm();bindEvents();setMode('radio');applyEQ(PRESETS.flat,'Flat');drawEQCurve();updateTrackMeta();
+  if('mediaSession' in navigator)$('mediaSessionState').textContent='READY';else $('mediaSessionState').textContent='UNAVAILABLE';
+  $('radioDsp').setAttribute('aria-pressed','false');$('radioDspHint').textContent='Прямое воспроизведение — режим совместимости. DSP для радио включается отдельно и требует CORS у радиосервера.';
+  if(rafId)cancelAnimationFrame(rafId);animate();
+  if(window.Telegram?.WebApp){safeCall(()=>window.Telegram.WebApp.ready());safeCall(()=>window.Telegram.WebApp.expand());}
+}
+init();
+})();
+</script>
+</body>
+</html>
