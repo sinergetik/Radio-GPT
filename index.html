@@ -264,7 +264,7 @@ audio.addEventListener('loadedmetadata',()=>updateTimeline());audio.addEventList
 function updateTimeline(){const a=currentAudio();const radio=state.isRadio;const dur=a.duration;$('currentTime').textContent=radio?'LIVE':fmtTime(a.currentTime);$('durationTime').textContent=radio?'LIVE':fmtTime(dur);const seek=$('seekbar');const disabled=radio||!Number.isFinite(dur)||dur<=0;seek.disabled=disabled;seek.classList.toggle('seek-disabled',disabled);if(!disabled&&dur>0&&document.activeElement!==seek)seek.value=String(Math.round(a.currentTime/dur*1000));}
 $('seekbar').addEventListener('input',()=>{const a=currentAudio();if(!state.isRadio&&Number.isFinite(a.duration)&&a.duration>0)a.currentTime=Number($('seekbar').value)/1000*a.duration;});
 function disposeCurrentUrl(){if(state.mode==='local'&&state.currentIndex>=0){/* playlist retains its own object URLs */}}
-function setLocalTrack(index,autoplay=true){if(index<0||index>=state.playlist.length)return;const track=state.playlist[index];clearReconnect();if(state.fallbackAudio){state.fallbackAudio.pause();state.fallbackAudio.src='';state.fallbackAudio=null;}state.activeAudio=audio;state.directFallback=false;state.isRadio=false;state.mode='local';state.currentIndex=index;state.fallbackUsed=false;audio.crossOrigin='anonymous';audio.src=track.url;audio.load();setSourceLabels(track.name,`${track.type.toUpperCase()} · Локальный файл`,'ЛОКАЛЬНЫЙ ФАЙЛ','Плейлист');$('formatState').textContent=track.type.toUpperCase();renderPlaylist();updateMediaMetadata(track.name,'TMA Audio Studio');setStatus(`Выбран трек: ${track.name}`);if(autoplay)safeMediaPlay();updateTimeline();}
+function setLocalTrack(index,autoplay=true){if(index<0||index>=state.playlist.length)return;const track=state.playlist[index];clearReconnect();if(state.fallbackAudio){state.fallbackAudio.pause();state.fallbackAudio.src='';state.fallbackAudio=null;}state.activeAudio=audio;state.directFallback=false;state.isRadio=false;state.mode='local';state.currentIndex=index;state.fallbackUsed=false;audio.preload='metadata';audio.crossOrigin='anonymous';audio.src=track.url;audio.load();setSourceLabels(track.name,`${track.type.toUpperCase()} · Локальный файл`,'ЛОКАЛЬНЫЙ ФАЙЛ','Плейлист');$('formatState').textContent=track.type.toUpperCase();renderPlaylist();updateMediaMetadata(track.name,'TMA Audio Studio');setStatus(`Выбран трек: ${track.name}`);if(autoplay)safeMediaPlay();updateTimeline();}
 $('filePicker').addEventListener('change',e=>{const files=Array.from(e.target.files||[]);if(!files.length)return;for(const file of files){const url=URL.createObjectURL(file);state.playlist.push({name:file.name,url,type:(file.name.split('.').pop()||'audio').toLowerCase(),size:file.size});state.objectUrls.push(url);}renderPlaylist();$('filePicker').value='';if(state.currentIndex<0)setLocalTrack(0,false);toast(`Добавлено файлов: ${files.length}`);});
 function renderPlaylist(){const host=$('playlist');host.innerHTML='';if(!state.playlist.length){host.innerHTML='<div class="empty">Плейлист пуст. Добавьте аудиофайлы с устройства.</div>';return;}state.playlist.forEach((t,i)=>{const el=document.createElement('div');el.className='track'+(i===state.currentIndex&&state.mode==='local'?' active':'');const size=t.size?`${(t.size/1048576).toFixed(1)} MB`:'';el.innerHTML=`<button class="station-play" type="button" aria-label="Воспроизвести">${i===state.currentIndex&&state.mode==='local'&&!audio.paused?'Ⅱ':'▶'}</button><div class="track-meta"><b title="${escapeHtml(t.name)}">${escapeHtml(t.name)}</b><small>${escapeHtml(t.type.toUpperCase())} · ${size}</small></div><button class="remove" type="button" aria-label="Удалить трек">×</button>`;el.querySelector('.station-play').addEventListener('click',()=>{if(i===state.currentIndex&&state.mode==='local'&&!currentAudio().paused)pauseAudio();else setLocalTrack(i,true);});el.querySelector('.remove').addEventListener('click',()=>removeTrack(i));host.appendChild(el);});}
 function escapeHtml(str){return String(str).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -285,16 +285,44 @@ $('playRadioBtn').addEventListener('click',()=>{let url=$('radioUrl').value.trim
 $('stopRadioBtn').addEventListener('click',()=>{clearReconnect();pauseAudio();state.isRadio=false;if(state.fallbackAudio){try{state.fallbackAudio.pause();state.fallbackAudio.removeAttribute('src');state.fallbackAudio.load();}catch(_){}}state.activeAudio=audio;state.fallbackAudio=null;state.directFallback=false;setStatus('Радио остановлено');});
 function startRadio(url,name){
  clearReconnect();
- // Use a separate plain <audio> element for radio. Cross-origin streams often omit
- // Access-Control-Allow-Origin; routing them through MediaElementAudioSourceNode can mute them.
- if(state.fallbackAudio){try{state.fallbackAudio.pause();state.fallbackAudio.removeAttribute('src');state.fallbackAudio.load();}catch(_){}}
- const radio=new Audio();radio.preload='none';radio.playsInline=true;radio.setAttribute('playsinline','');radio.volume=Number($('volumeRange').value)/100;radio.src=url;
- state.fallbackAudio=radio;state.activeAudio=radio;state.directFallback=true;state.isRadio=true;state.mode='radio';state.radioUrl=url;state.radioName=name;state.fallbackUsed=false;state.reconnectCount=0;state.silentFrames=0;
- setSourceLabels(name,'LIVE · прямое подключение к потоку','RADIO · DIRECT',name);$('formatState').textContent='Radio / direct';$('engineStatus').textContent='DSP: обход CORS';$('dspState').textContent='BYPASS';$('dspState').style.color='var(--warn)';$('currentTime').textContent='LIVE';$('durationTime').textContent='LIVE';$('seekbar').disabled=true;$('seekbar').classList.add('seek-disabled');$('currentSub').textContent='LIVE · прямой поток · DSP может быть недоступен у этой станции';$('sourcePill').textContent='RADIO · DIRECT';
- radio.addEventListener('playing',()=>{clearReconnect();state.reconnectCount=0;setStatus(`Радио играет: ${state.radioName}`,'on');$('playBtn').textContent='Ⅱ';$('playBtn').setAttribute('aria-label','Пауза');setupMediaSession();});
- ['waiting','stalled','error'].forEach(ev=>radio.addEventListener(ev,()=>{if(state.isRadio)scheduleReconnect();}));
- setStatus(`Подключение: ${name}`);setActivePanel('radio');renderStations();radio.play().then(()=>{setupMediaSession();}).catch(err=>{setStatus('Не удалось запустить радиопоток','warn');toast(`Ошибка радио: ${err.message||err.name}. Проверьте URL, сеть и поддержку AAC в браузере.`);});
+ // Радио сначала идёт через тот же Web Audio DSP-граф, что и локальные треки.
+ // Если сервер запрещает CORS и Web Audio выдаёт тишину, maybeCheckRadioCors()
+ // автоматически переключит поток на прямое воспроизведение как запасной вариант.
+ if(state.fallbackAudio){try{state.fallbackAudio.pause();state.fallbackAudio.removeAttribute('src');state.fallbackAudio.load();}catch(_){}state.fallbackAudio=null;}
+ try{audio.pause();}catch(_){}
+ state.activeAudio=audio;
+ state.directFallback=false;
+ state.isRadio=true;
+ state.mode='radio';
+ state.radioUrl=url;
+ state.radioName=name;
+ state.fallbackUsed=false;
+ state.reconnectCount=0;
+ state.silentFrames=0;
+ state.lastCORSProbe=0;
+ audio.crossOrigin='anonymous';
+ audio.preload='none';
+ audio.src=url;
+ audio.load();
+ setSourceLabels(name,'LIVE · интернет-поток через DSP','RADIO · DSP',name);
+ $('formatState').textContent='Radio / Web Audio';
+ $('engineStatus').textContent='DSP: активен';
+ $('dspState').textContent=state.bypass?'BYPASS':'ON';
+ $('dspState').style.color='';
+ $('currentTime').textContent='LIVE';
+ $('durationTime').textContent='LIVE';
+ $('seekbar').disabled=true;
+ $('seekbar').classList.add('seek-disabled');
+ $('currentSub').textContent='LIVE · поток проходит через эквалайзер и DSP; при ограничении CORS будет включён прямой режим';
+ $('sourcePill').textContent='RADIO · DSP';
+ setStatus(`Подключение: ${name}`);
+ setActivePanel('radio');
+ renderStations();
+ initAudio();
+ if(state.audioCtx&&state.audioCtx.state==='suspended')state.audioCtx.resume().catch(()=>{});
+ audio.play().then(()=>{setupMediaSession();}).catch(err=>{setStatus('Не удалось запустить радиопоток','warn');toast(`Ошибка радио: ${err.message||err.name}. Проверьте URL, сеть и поддержку AAC в браузере.`);});
 }
+
 function clearReconnect(){if(state.reconnectTimer){clearTimeout(state.reconnectTimer);state.reconnectTimer=null;}}
 function scheduleReconnect(){if(!state.isRadio||state.reconnectTimer)return;if(state.reconnectCount>=5){setStatus('Радио не восстановлено после 5 попыток','warn');toast('Автопереподключение остановлено. Проверьте URL или сеть.');return;}const delay=Math.min(30000,1500*Math.pow(2,state.reconnectCount));state.reconnectCount++;setStatus(`Обрыв потока · переподключение ${state.reconnectCount}/5 через ${Math.round(delay/1000)} с`,'warn');state.reconnectTimer=setTimeout(()=>{state.reconnectTimer=null;if(!state.isRadio)return;if(state.directFallback&&state.fallbackAudio){const f=state.fallbackAudio;try{f.pause();f.src=state.radioUrl;f.load();f.play().catch(err=>{setStatus('Не удалось восстановить поток','warn');});}catch(_){}}else{audio.src=state.radioUrl;audio.load();safeMediaPlay();}},delay);}
 ['error','stalled'].forEach(ev=>audio.addEventListener(ev,()=>{if(state.isRadio)scheduleReconnect();}));
